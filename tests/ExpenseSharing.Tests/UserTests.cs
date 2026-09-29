@@ -1,4 +1,4 @@
-using ExpenseSharing.Application;
+using ExpenseSharing.Domain;
 using Xunit;
 
 namespace ExpenseSharing.Tests;
@@ -6,17 +6,16 @@ namespace ExpenseSharing.Tests;
 public class UserTests
 {
     [Fact]
-    public void Should_Create_A_User()
+    public void Should_Create_User()
     {
         // Arrange
-        var expenseService = new ExpenseService();
+        var id = 1;
+        var name = "Alice";
 
         // Act
-        expenseService.CreateUser(1, "Alice");
+        var user = new User(id, name);
 
         // Assert
-        var user = expenseService.GetUser(1);
-
         Assert.Equal(1, user.Id);
         Assert.Equal("Alice", user.Name);
     }
