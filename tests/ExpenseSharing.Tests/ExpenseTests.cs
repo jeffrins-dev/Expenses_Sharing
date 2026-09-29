@@ -9,6 +9,17 @@ public class ExpenseTests
     public void Should_Calculate_Equal_Share()
     {
         // Arrange
+        var data = CreateMockData();
+
+        // Act
+        var share = data.Expense.GetShare();
+
+        // Assert
+        Assert.Equal(100, share);
+    }
+
+    private static MockData CreateMockData()
+    {
         var alice = new User(1, "Alice");
         var bob = new User(2, "Bob");
         var charlie = new User(3, "Charlie");
@@ -26,10 +37,8 @@ public class ExpenseTests
             300,
             participants);
 
-        // Act
-        var share = expense.GetShare();
-
-        // Assert
-        Assert.Equal(100, share);
+        return new MockData(expense);
     }
+
+    private record MockData(Expense Expense);
 }

@@ -10,16 +10,10 @@ public class BalanceTests
     public void Should_Show_Alice_Receives_200()
     {
         // Arrange
-        var service = CreateService();
-
-        var alice = service.CreateUser(1, "Alice");
-        var bob = service.CreateUser(2, "Bob");
-        var charlie = service.CreateUser(3, "Charlie");
-
-        AddEqualExpense(service, alice, bob, charlie);
+        var data = CreateMockData();
 
         // Act
-        var balance = service.GetBalance(alice);
+        var balance = data.Service.GetBalance(data.Alice);
 
         // Assert
         Assert.Equal(200, balance);
@@ -29,16 +23,10 @@ public class BalanceTests
     public void Should_Show_Bob_Owes_100()
     {
         // Arrange
-        var service = CreateService();
-
-        var alice = service.CreateUser(1, "Alice");
-        var bob = service.CreateUser(2, "Bob");
-        var charlie = service.CreateUser(3, "Charlie");
-
-        AddEqualExpense(service, alice, bob, charlie);
+        var data = CreateMockData();
 
         // Act
-        var balance = service.GetBalance(bob);
+        var balance = data.Service.GetBalance(data.Bob);
 
         // Assert
         Assert.Equal(-100, balance);
@@ -48,32 +36,23 @@ public class BalanceTests
     public void Should_Show_Charlie_Owes_100()
     {
         // Arrange
-        var service = CreateService();
-
-        var alice = service.CreateUser(1, "Alice");
-        var bob = service.CreateUser(2, "Bob");
-        var charlie = service.CreateUser(3, "Charlie");
-
-        AddEqualExpense(service, alice, bob, charlie);
+        var data = CreateMockData();
 
         // Act
-        var balance = service.GetBalance(charlie);
+        var balance = data.Service.GetBalance(data.Charlie);
 
         // Assert
         Assert.Equal(-100, balance);
     }
 
-    private static ExpenseService CreateService()
+    private static MockData CreateMockData()
     {
-        return new ExpenseService();
-    }
+        var service = new ExpenseService();
 
-    private static void AddEqualExpense(
-        ExpenseService service,
-        User alice,
-        User bob,
-        User charlie)
-    {
+        var alice = service.CreateUser(1, "Alice");
+        var bob = service.CreateUser(2, "Bob");
+        var charlie = service.CreateUser(3, "Charlie");
+
         service.AddExpense(
             1,
             alice,
@@ -84,5 +63,13 @@ public class BalanceTests
                 bob,
                 charlie
             });
+
+        return new MockData(service, alice, bob, charlie);
     }
+
+    private record MockData(
+        ExpenseService Service,
+        User Alice,
+        User Bob,
+        User Charlie);
 }
