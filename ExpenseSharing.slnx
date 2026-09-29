@@ -1,0 +1,10 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/ExpenseSharing.Api/ExpenseSharing.Api.csproj" />
+    <Project Path="src/ExpenseSharing.Application/ExpenseSharing.Application.csproj" />
+    <Project Path="src/ExpenseSharing.Domain/ExpenseSharing.Domain.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/ExpenseSharing.Tests/ExpenseSharing.Tests.csproj" />
+  </Folder>
+</Solution>
