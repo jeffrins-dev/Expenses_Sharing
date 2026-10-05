@@ -16,6 +16,30 @@ public class ExpenseService
         return user;
     }
 
+    public IReadOnlyList<User> GetUsers()
+    {
+        return _users;
+    }
+
+    public User UpdateUser(int id, string name)
+    {
+        var user = _users.Single(user => user.Id == id);
+
+        var updatedUser = new User(user.Id, name);
+
+        _users.Remove(user);
+        _users.Add(updatedUser);
+
+        return updatedUser;
+    }
+
+    public void DeleteUser(int id)
+    {
+        var user = _users.Single(user => user.Id == id);
+
+        _users.Remove(user);
+    }
+
     public Expense AddExpense(
         int id,
         User paidBy,
@@ -33,8 +57,41 @@ public class ExpenseService
         return expense;
     }
 
+    public IReadOnlyList<Expense> GetExpenses()
+    {
+        return _expenses;
+    }
+
+    public Expense UpdateExpense(
+        int id,
+        User paidBy,
+        decimal amount,
+        IReadOnlyList<User> participants)
+    {
+        var expense = _expenses.Single(expense => expense.Id == id);
+
+        var updatedExpense = new Expense(
+            expense.Id,
+            paidBy,
+            amount,
+            participants);
+
+        _expenses.Remove(expense);
+        _expenses.Add(updatedExpense);
+
+        return updatedExpense;
+    }
+
+    public void DeleteExpense(int id)
+    {
+        var expense = _expenses.Single(expense => expense.Id == id);
+
+        _expenses.Remove(expense);
+    }
+
     public decimal GetBalance(User user)
     {
-        return _expenses.Sum(expense => expense.GetBalanceFor(user));
+        return _expenses.Sum(
+            expense => expense.GetBalanceFor(user));
     }
 }
