@@ -117,66 +117,73 @@ export default function Home() {
   }
 
   async function addExpense(event: FormEvent) {
-    event.preventDefault();
+  event.preventDefault();
 
-    const participantIds = participantUserIds
-      .split(",")
-      .map((id) => id.trim())
-      .filter((id) => id.length > 0);
+  const participantIds = participantUserIds
+    .split(",")
+    .map((id) => Number(id.trim()))
+    .filter((id) => id > 0);
 
-    const params = new URLSearchParams();
+  const response = await fetch(`${API_URL}/expenses`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      id: Number(expenseId),
+      paidByUserId: Number(paidByUserId),
+      amount: Number(amount),
+      participantUserIds: participantIds,
+    }),
+  });
 
-    params.set("id", expenseId);
-    params.set("paidByUserId", paidByUserId);
-    params.set("amount", amount);
-
-    participantIds.forEach((id) => {
-      params.append("participantUserIds", id);
-    });
-
-    await fetch(`${API_URL}/expenses?${params.toString()}`, {
-      method: "POST",
-    });
-
-    clearExpenseForm();
-
-    await loadExpenses();
-    await loadUsers();
+  if (!response.ok) {
+    throw new Error("Failed to add expense");
   }
 
-  async function updateExpense(event: FormEvent) {
-    event.preventDefault();
+  clearExpenseForm();
 
-    if (editingExpenseId === null) {
-      return;
+  await loadExpenses();
+  await loadUsers();
+}
+
+ async function updateExpense(event: FormEvent) {
+  event.preventDefault();
+
+  if (editingExpenseId === null) {
+    return;
+  }
+
+  const participantIds = participantUserIds
+    .split(",")
+    .map((id) => Number(id.trim()))
+    .filter((id) => id > 0);
+
+  const response = await fetch(
+    `${API_URL}/expenses/${editingExpenseId}`,
+    {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        id: editingExpenseId,
+        paidByUserId: Number(paidByUserId),
+        amount: Number(amount),
+        participantUserIds: participantIds,
+      }),
     }
+  );
 
-    const participantIds = participantUserIds
-      .split(",")
-      .map((id) => id.trim())
-      .filter((id) => id.length > 0);
-
-    const params = new URLSearchParams();
-
-    params.set("paidByUserId", paidByUserId);
-    params.set("amount", amount);
-
-    participantIds.forEach((id) => {
-      params.append("participantUserIds", id);
-    });
-
-    await fetch(
-      `${API_URL}/expenses/${editingExpenseId}?${params.toString()}`,
-      {
-        method: "PUT",
-      }
-    );
-
-    clearExpenseForm();
-
-    await loadExpenses();
-    await loadUsers();
+  if (!response.ok) {
+    throw new Error("Failed to update expense");
   }
+
+  clearExpenseForm();
+
+  await loadExpenses();
+  await loadUsers();
+}
 
   async function deleteExpense(id: number) {
     await fetch(`${API_URL}/expenses/${id}`, {

@@ -58,46 +58,41 @@ app.MapGet("/expenses", (ExpenseService service) =>
 });
 
 app.MapPost("/expenses", (
-    int id,
-    int paidByUserId,
-    decimal amount,
-    int[] participantUserIds,
+    ExpenseRequest request,
     ExpenseService service) =>
 {
     var users = service.GetUsers();
 
-    var paidBy = users.Single(user => user.Id == paidByUserId);
+    var paidBy = users.Single(user => user.Id == request.PaidByUserId);
 
-    var participants = participantUserIds
+    var participants = request.ParticipantUserIds
         .Select(userId => users.Single(user => user.Id == userId))
         .ToList();
 
     return service.AddExpense(
-        id,
+        request.Id,
         paidBy,
-        amount,
+        request.Amount,
         participants);
 });
 
 app.MapPut("/expenses/{id}", (
     int id,
-    int paidByUserId,
-    decimal amount,
-    int[] participantUserIds,
+    ExpenseRequest request,
     ExpenseService service) =>
 {
     var users = service.GetUsers();
 
-    var paidBy = users.Single(user => user.Id == paidByUserId);
+    var paidBy = users.Single(user => user.Id == request.PaidByUserId);
 
-    var participants = participantUserIds
+    var participants = request.ParticipantUserIds
         .Select(userId => users.Single(user => user.Id == userId))
         .ToList();
 
     return service.UpdateExpense(
         id,
         paidBy,
-        amount,
+        request.Amount,
         participants);
 });
 
@@ -121,3 +116,9 @@ app.MapGet("/users/{id}/balance", (
 });
 
 app.Run();
+
+public record ExpenseRequest(
+    int Id,
+    int PaidByUserId,
+    decimal Amount,
+    int[] ParticipantUserIds);
