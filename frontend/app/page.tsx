@@ -137,9 +137,12 @@ export default function Home() {
     }),
   });
 
-  if (!response.ok) {
-    throw new Error("Failed to add expense");
-  }
+ if (!response.ok) {
+  const error = await response.text();
+  console.log("Status:", response.status);
+  console.log("Error:", error);
+  throw new Error(`Failed to add expense: ${response.status}`);
+}
 
   clearExpenseForm();
 
